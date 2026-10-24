@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>ExpenseFlow — Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+  <main id="loginView" class="login-shell">
+    <section class="login-art">
+      <div class="brand"><span class="brand-mark">↗</span><span>Expense<span class="brand-accent">Flow</span></span></div>
+      <div class="art-copy">
+        <span class="eyebrow">YOUR MONEY, IN FOCUS</span>
+        <h1>Make every<br><span>rupee count.</span></h1>
+        <p>A clearer view of your spending. Better habits start with knowing where your money goes.</p>
+        <div class="mini-chart" aria-hidden="true">
+          <div class="mini-chart-head"><span>Monthly overview</span><span class="live-dot">● Live</span></div>
+          <div class="bars"><i style="height:36%"></i><i style="height:55%"></i><i style="height:43%"></i><i style="height:75%"></i><i style="height:60%"></i><i style="height:92%"></i><i style="height:69%"></i><i style="height:82%"></i></div>
+          <div class="bar-labels"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div>
+        </div>
+      </div>
+      <div class="art-foot">Simple finances. Smarter decisions.</div>
+    </section>
+    <section class="login-panel">
+      <form id="loginForm" class="login-card">
+        <div class="mobile-brand brand"><span class="brand-mark">↗</span><span>Expense<span class="brand-accent">Flow</span></span></div>
+        <span class="eyebrow">WELCOME BACK</span>
+        <h2>Sign in to your account</h2>
+        <p class="muted">Enter your demo credentials to continue.</p>
+        <label for="username">Username</label>
+        <div class="input-wrap"><span>♙</span><input id="username" name="username" autocomplete="username" placeholder="e.g. admin" required /></div>
+        <label for="password">Password</label>
+        <div class="input-wrap"><span>⌑</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" required /></div>
+        <button class="btn btn-primary full" type="submit">Sign in <span>→</span></button>
+        <div class="demo-box"><strong>Demo access</strong><p>Username: <code>admin</code> · Password: <code>1234</code></p><p>Also available: <code>staff</code> or <code>student</code> · Password: <code>1234</code></p></div>
+        <p class="fine-print">Demo project · Data is saved in this browser only.</p>
+      </form>
+    </section>
+  </main>
+
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand side-brand" href="#"><span class="brand-mark">↗</span><span>Expense<span class="brand-accent">Flow</span></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="nav-list">
+        <button class="nav-item active" data-page="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+        <button class="nav-item" data-page="transactions"><span class="nav-icon">↔</span> Transactions</button>
+        <button class="nav-item" data-page="add"><span class="nav-icon">＋</span> Add transaction</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><div class="help-icon">✦</div><strong>Small steps add up.</strong><p>Track consistently to understand your money better.</p></div>
+        <button id="logoutBtn" class="nav-item logout"><span class="nav-icon">↪</span> Log out</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <button id="menuBtn" class="menu-btn" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="pageName">Dashboard</strong></div>
+        <div class="top-actions"><span class="today-pill" id="todayLabel"></span><div class="avatar" id="avatar">A</div><div class="user-meta"><strong id="userName">Admin</strong><span>Demo account</span></div></div>
+      </header>
+
+      <section id="dashboardPage" class="page">
+        <div class="page-heading"><div><span class="eyebrow">YOUR FINANCIAL SNAPSHOT</span><h1>Dashboard</h1><p class="muted">Here's what's happening with your money.</p></div><button class="btn btn-primary" data-goto="add">＋ Add transaction</button></div>
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-top"><span>Total expenses</span><span class="stat-icon purple">↗</span></div><div class="stat-value" id="totalSpend">₹0</div><div class="stat-foot">Across all recorded expenses</div></article>
+          <article class="stat-card"><div class="stat-top"><span>This month</span><span class="stat-icon teal">▦</span></div><div class="stat-value" id="monthSpend">₹0</div><div class="stat-foot" id="monthCaption">Current month spending</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Total income</span><span class="stat-icon green">＋</span></div><div class="stat-value" id="totalIncome">₹0</div><div class="stat-foot">Across all recorded income</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Average expense</span><span class="stat-icon orange">∿</span></div><div class="stat-value" id="averageSpend">₹0</div><div class="stat-foot">Per expense transaction</div></article>
+        </div>
+        <div class="chart-grid">
+          <article class="panel chart-panel"><div class="panel-head"><div><h3>Spending by category</h3><p class="muted">Where your expenses go</p></div><span class="panel-chip">Overview</span></div><div class="chart-wrap doughnut-wrap"><canvas id="categoryChart"></canvas><div id="chartCenter" class="chart-center"><strong>₹0</strong><span>Total spend</span></div></div><div id="categoryLegend" class="legend"></div></article>
+          <article class="panel chart-panel"><div class="panel-head"><div><h3>Spending trends</h3><p class="muted">Your last six months</p></div><span class="panel-chip">6 months</span></div><div class="chart-wrap"><canvas id="trendChart"></canvas></div></article>
+        </div>
+        <article class="panel recent-panel"><div class="panel-head"><div><h3>Recent transactions</h3><p class="muted">Your latest money movements</p></div><button class="text-btn" data-goto="transactions">View all →</button></div><div id="recentTransactions" class="transaction-list"></div></article>
+      </section>
+
+      <section id="transactionsPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">YOUR MONEY ACTIVITY</span><h1>Transactions</h1><p class="muted">Review and manage your income and expenses.</p></div><button class="btn btn-primary" data-goto="add">＋ Add transaction</button></div>
+        <article class="panel">
+          <div class="filters"><div class="search-box"><span>⌕</span><input id="searchInput" placeholder="Search transactions..." /></div><select id="typeFilter" aria-label="Filter by type"><option value="all">All types</option><option value="expense">Expenses</option><option value="income">Income</option></select><select id="categoryFilter" aria-label="Filter by category"><option value="all">All categories</option></select></div>
+          <div id="allTransactions" class="transaction-list full-list"></div>
+          <div id="emptyTransactions" class="empty-state hidden"><span>◷</span><h3>No transactions found</h3><p>Try changing your filters or add a new transaction.</p><button class="btn btn-secondary" data-goto="add">Add transaction</button></div>
+        </article>
+      </section>
+
+      <section id="addPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">KEEP YOUR RECORDS UP TO DATE</span><h1 id="formHeading">Add transaction</h1><p class="muted">Record income or expenses in just a few steps.</p></div></div>
+        <div class="add-layout">
+          <article class="panel form-panel"><form id="transactionForm">
+            <input type="hidden" id="editId" />
+            <div class="type-switch"><button type="button" class="type-option selected" data-type="expense">↘ Expense</button><button type="button" class="type-option" data-type="income">↗ Income</button></div>
+            <input type="hidden" id="transactionType" value="expense" />
+            <div class="form-grid"><div class="field field-wide"><label for="title">Transaction title *</label><input id="title" maxlength="70" placeholder="e.g. Grocery shopping" required /></div>
+            <div class="field"><label for="amount">Amount (₹) *</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required /></div>
+            <div class="field"><label for="category">Category *</label><select id="category" required></select></div>
+            <div class="field"><label for="date">Date *</label><input id="date" type="date" required /></div>
+            <div class="field field-wide"><label for="note">Notes <span class="muted">(optional)</span></label><textarea id="note" rows="3" maxlength="250" placeholder="Add a little detail..."></textarea></div></div>
+            <div class="form-actions"><button id="cancelEdit" type="button" class="btn btn-secondary hidden">Cancel edit</button><button class="btn btn-primary" type="submit" id="saveTransaction">Save transaction <span>→</span></button></div>
+          </form></article>
+          <aside class="side-tip"><div class="tip-orb">✦</div><h3>Make it a habit</h3><p>Adding transactions regularly helps you spot patterns and make more confident financial decisions.</p><div class="tip-line"></div><div class="tip-stat"><span>Supported categories</span><strong>7 categories</strong></div><div class="tip-stat"><span>Data storage</span><strong>On this device</strong></div></aside>
+        </div>
+        <article class="panel recent-panel"><div class="panel-head"><div><h3>Recently added</h3><p class="muted">Your latest five transactions</p></div><button class="text-btn" data-goto="transactions">View all →</button></div><div id="addRecentTransactions" class="transaction-list"></div></article>
+      </section>
+      <footer class="footer">ExpenseFlow <span>·</span> Personal finance, made clearer.</footer>
+    </main>
+  </div>
+  <dialog id="deleteDialog" class="confirm-dialog"><div class="dialog-icon">!</div><h3>Delete transaction?</h3><p>This action can't be undone. The transaction will be removed from your records.</p><div class="dialog-actions"><button id="keepTransaction" class="btn btn-secondary">Keep it</button><button id="confirmDelete" class="btn btn-danger">Delete</button></div></dialog>
+  <script src="script.js"></script>
+</body>
+</html>
